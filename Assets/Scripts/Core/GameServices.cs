@@ -13,6 +13,7 @@ namespace UnderpinSlots
         public static IProgressResetter Progress { get; private set; }
         public static ISymbolCatalog Catalog { get; private set; }
         public static ISceneLoader SceneLoader { get; private set; }
+        public static ISoundPlayer Sound { get; private set; } = new NullSoundPlayer();
 
         // Kept in a field so it is not garbage collected (it listens to service events).
         private static PlayerDataSaver saver;
@@ -27,6 +28,18 @@ namespace UnderpinSlots
                 return;
             }
             Initialize(config, new PlayerPrefsDataRepository());
+            Sound = CreateSoundPlayer();
+        }
+
+        // Creates the SoundPlayer prefab once and keeps it alive across scenes.
+        private static ISoundPlayer CreateSoundPlayer()
+        {
+            var prefab = Resources.Load<SoundPlayer>("SoundPlayer");
+            if (prefab == null) return new NullSoundPlayer(); // no prefab yet: game runs silently
+
+            var instance = Object.Instantiate(prefab);
+            Object.DontDestroyOnLoad(instance.gameObject);
+            return instance;
         }
 
         // Public so tests can inject a fake repository.

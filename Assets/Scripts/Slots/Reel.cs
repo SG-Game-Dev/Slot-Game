@@ -33,6 +33,8 @@ namespace UnderpinSlots
         private Image[] pool;
         private float offset;
 
+        public event System.Action Stopped = delegate { };
+
         public bool IsStopped { get; private set; } = true;
         public SymbolType StoppedSymbol { get; private set; }
 
@@ -94,6 +96,7 @@ namespace UnderpinSlots
 
             StoppedSymbol = target;
             IsStopped = true;
+            Stopped();
         }
 
         // Smallest whole offset >= minOffset that puts the target symbol on the pay line.

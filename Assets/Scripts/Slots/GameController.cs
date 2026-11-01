@@ -35,6 +35,7 @@ namespace UnderpinSlots
         private IOutcomeGenerator outcomeGenerator;
         private IPayoutCalculator payoutCalculator;
         private ISceneLoader sceneLoader;
+        private ISoundPlayer sound;
 
         private bool isSpinning;
         private bool isPaused;
@@ -44,6 +45,7 @@ namespace UnderpinSlots
             wallet = GameServices.Wallet;
             betSelector = GameServices.BetSelector;
             sceneLoader = GameServices.SceneLoader;
+            sound = GameServices.Sound;
             outcomeGenerator = new WeightedOutcomeGenerator(GameServices.Catalog);
             payoutCalculator = new PayoutCalculator(GameServices.Catalog);
 
@@ -58,6 +60,8 @@ namespace UnderpinSlots
         private void OnEnable()
         {
             handle.Clicked += OnSpinRequested;
+            betSelector.BetChanged += OnBetChanged;
+            foreach (var reel in reels) reel.Stopped += OnReelStopped;
             pauseButton.onClick.AddListener(OpenPause);
             settingsButton.onClick.AddListener(settingsPopup.Open);
             pausePopup.ResumeRequested += ClosePause;
@@ -67,6 +71,8 @@ namespace UnderpinSlots
         private void OnDisable()
         {
             handle.Clicked -= OnSpinRequested;
+            betSelector.BetChanged -= OnBetChanged;
+            foreach (var reel in reels) reel.Stopped -= OnReelStopped;
             pauseButton.onClick.RemoveListener(OpenPause);
             settingsButton.onClick.RemoveListener(settingsPopup.Open);
             pausePopup.ResumeRequested -= ClosePause;
@@ -74,6 +80,10 @@ namespace UnderpinSlots
         }
 
         private void OnDestroy() => Time.timeScale = 1f; // safety: never leave the game frozen
+
+        // ---------- Sounds ----------
+        private void OnBetChanged(int _) => sound.Play(SoundId.Click);
+        private void OnReelStopped() => sound.Play(SoundId.ReelStop);
 
         // ---------- Pause ----------
         private void OpenPause()
@@ -120,6 +130,7 @@ namespace UnderpinSlots
             var result = reels.Select(_ => outcomeGenerator.Next()).ToList();
 
             // 2) Pull the lever, then reels only animate towards that result.
+            sound.Play(SoundId.Spin);
             yield return handle.PlayPull();
             for (int i = 0; i < reels.Length; i++)
                 reels[i].Spin(result[i], baseSpinTime + i * stopStagger);
@@ -130,6 +141,7 @@ namespace UnderpinSlots
             int prize = payoutCalculator.Calculate(result, bet);
             if (prize > 0)
             {
+                sound.Play(SoundId.Win);
                 winView.Show(prize);
                 yield return new WaitForSeconds(winShowTime);
                 wallet.Add(prize);
