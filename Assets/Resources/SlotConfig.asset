@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe99a976b6c7427419273e081ed27249, type: 3}
+  m_Name: SlotConfig
+  m_EditorClassIdentifier: Assembly-CSharp::UnderpinSlots.SlotConfig
+  symbols:
+  - symbol: 0
+    sprite: {fileID: 21300000, guid: f4826869078922944a2104953f3492be, type: 3}
+    weight: 10
+    winMultiplier: 100
+  - symbol: 1
+    sprite: {fileID: 21300000, guid: 25a0a58f75b07ed4f9a0b560711fd4b4, type: 3}
+    weight: 30
+    winMultiplier: 10
+  - symbol: 2
+    sprite: {fileID: 21300000, guid: 1144e429fbc63b840b4fc884a0e82e54, type: 3}
+    weight: 20
+    winMultiplier: 25
+  - symbol: 3
+    sprite: {fileID: 21300000, guid: f4b73d50abd0b9f45a4cd96d9259c8de, type: 3}
+    weight: 40
+    winMultiplier: 5
+  betOptions: 0a0000003200000064000000f4010000
+  startingBalance: 1000
